@@ -1,5 +1,5 @@
-#include <iostream>
 #include "ukf.h"
+#include <iostream>
 
 /**
  * Initializes Unscented Kalman filter

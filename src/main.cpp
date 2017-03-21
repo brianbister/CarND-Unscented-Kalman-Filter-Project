@@ -1,19 +1,19 @@
 
-#include <iostream>
 #include "Eigen/Dense"
-#include <vector>
-#include "ukf.h"
 #include "measurement_package.h"
+#include "ukf.h"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <stdlib.h>
+#include <vector>
 
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::vector;
 
-void check_arguments(int argc, char* argv[]) {
+void check_arguments(int argc, char *argv[]) {
   string usage_instructions = "Usage instructions: ";
   usage_instructions += argv[0];
   usage_instructions += " path/to/input.txt output.txt";
@@ -36,8 +36,8 @@ void check_arguments(int argc, char* argv[]) {
   }
 }
 
-void check_files(ifstream& in_file, string& in_name,
-                 ofstream& out_file, string& out_name) {
+void check_files(ifstream &in_file, string &in_name, ofstream &out_file,
+                 string &out_name) {
   if (!in_file.is_open()) {
     cerr << "Cannot open input file: " << in_name << endl;
     exit(EXIT_FAILURE);
@@ -49,7 +49,7 @@ void check_files(ifstream& in_file, string& in_name,
   }
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
   check_arguments(argc, argv);
 
@@ -139,7 +139,8 @@ int main(int argc, char* argv[]) {
 
       // p2 - meas
       out_file_ << measurement_pack_list[k].raw_measurements_(1) << "\t";
-    } else if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::RADAR) {
+    } else if (measurement_pack_list[k].sensor_type_ ==
+               MeasurementPackage::RADAR) {
       // output the estimation in the cartesian coordinates
       float ro = measurement_pack_list[k].raw_measurements_(0);
       float phi = measurement_pack_list[k].raw_measurements_(1);
