@@ -1,7 +1,11 @@
 #ifndef UKF_H
 #define UKF_H
+
 #include "Eigen/Dense"
 #include "measurement_package.h"
+#include "tools.h"
+#include <fstream>
+#include <string>
 #include <vector>
 
 using Eigen::MatrixXd;
@@ -9,7 +13,6 @@ using Eigen::VectorXd;
 
 class UKF {
 public:
-
   ///* initially set to false, set to true in first call of ProcessMeasurement
   bool is_initialized_;
 
@@ -22,11 +25,24 @@ public:
   ///* state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   VectorXd x_;
 
+  ///* augmented state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate noise_a
+  /// noise_yaw_rate] in SI units and rad
+  VectorXd x_aug_;
+
   ///* state covariance matrix
   MatrixXd P_;
 
+  ///* augmented state covariance matrix
+  MatrixXd P_aug_;
+
+  ///* sigma point matrix
+  MatrixXd Xsig_aug_;
+
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
+
+  ///* previous timestamp
+  long previous_timestamp_;
 
   ///* time when the state is true, in us
   long time_us_;
@@ -50,7 +66,7 @@ public:
   double std_radphi_;
 
   ///* Radar measurement noise standard deviation radius change in m/s
-  double std_radrd_ ;
+  double std_radrd_;
 
   ///* Weights of sigma points
   VectorXd weights_;
@@ -60,6 +76,9 @@ public:
 
   ///* Augmented state dimension
   int n_aug_;
+
+  ///* Number of sigma points
+  int n_sigma_;
 
   ///* Sigma point spreading parameter
   double lambda_;
@@ -104,6 +123,20 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+private:
+  void AugmentedSigmaPoints();
+
+  void SigmaPointPrediction(double delta_t);
+
+  void PredictMeanAndCovariance();
+
+  void PredictRadarMeasurement(MatrixXd &Zsig, VectorXd &z_pred, MatrixXd &S);
+
+  void PredictLidarMeasurement(MatrixXd &Zsig, VectorXd &z_pred, MatrixXd &S);
+
+  void UpdateState(const VectorXd &z, const MatrixXd &Zsig,
+                   const VectorXd &z_pred, const MatrixXd &S);
 };
 
 #endif /* UKF_H */
