@@ -144,25 +144,25 @@ UKF::UKF() {
   Xsig_pred_ = MatrixXd(n_x_, n_sigma_);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 3;
+  std_a_ = 1;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 0.3;
+  std_yawdd_ = 0.6;
 
   // Laser measurement noise standard deviation position1 in m
-  std_laspx_ = 0.1;
+  std_laspx_ = 0.15;
 
   // Laser measurement noise standard deviation position2 in m
-  std_laspy_ = 0.1;
+  std_laspy_ = 0.15;
 
   // Radar measurement noise standard deviation radius in m
   std_radr_ = 0.3;
 
   // Radar measurement noise standard deviation angle in rad
-  std_radphi_ = 0.0003;
+  std_radphi_ = 0.03;
 
   // Radar measurement noise standard deviation radius change in m/s
-  std_radrd_ = 0.1;
+  std_radrd_ = 0.3;
 
   x_ = VectorXd(n_x_);
   x_ << 0, 0, 0, 0, 0;
@@ -351,7 +351,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
         return;
       }
       x_ << rho * cos(phi), rho * sin(phi), meas_package.raw_measurements_[2],
-          phi, 0;
+          0, 0;
     } else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
       if (!meas_package.raw_measurements_[0] ||
           !meas_package.raw_measurements_[1]) {
