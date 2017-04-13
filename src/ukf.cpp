@@ -198,6 +198,12 @@ void UKF::PredictRadarMeasurement(MatrixXd &Zsig, VectorXd &z_pred,
     double v2 = sin(yaw) * v;
 
     // measurement model
+    if (abs(p_x) < 0.001) {
+      p_x = 0.0001;
+    }
+    if (abs(p_y) < 0.001) {
+      p_y = 0.0001;
+    }
     Zsig(0, i) = sqrt(p_x * p_x + p_y * p_y);                         // r
     Zsig(1, i) = atan2(p_y, p_x);                                     // phi
     Zsig(2, i) = (p_x * v1 + p_y * v2) / sqrt(p_x * p_x + p_y * p_y); // r_dot
@@ -297,12 +303,14 @@ void UKF::UpdateState(const VectorXd &z, const MatrixXd &Zsig,
 
     // residual
     VectorXd z_diff = Zsig.col(i) - z_pred;
-    // angle normalization
-    while (z_diff(1) > M_PI)
-      z_diff(1) -= 2. * M_PI;
-    while (z_diff(1) < -M_PI)
-      z_diff(1) += 2. * M_PI;
 
+    if (n_z == 3) { // Radar
+      // angle normalization
+      while (z_diff(1) > M_PI)
+        z_diff(1) -= 2. * M_PI;
+      while (z_diff(1) < -M_PI)
+        z_diff(1) += 2. * M_PI;
+    }
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
     // angle normalization
